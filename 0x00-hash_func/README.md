@@ -1,0 +1,1 @@
+- [code examples](https://github.com/jakeBitcoinAssociation/hash-functions)
