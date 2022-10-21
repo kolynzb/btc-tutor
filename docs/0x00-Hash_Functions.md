@@ -77,6 +77,43 @@ go get github.com/libsv/go-bc
   2^m
   hash attempts, the hash function is no longer considered preimage resistant and is no longer secure.
 
-2. __Second Preimage Resistance: Deterministic__ 
+2. **Second Preimage Resistance: Deterministic**
 
 <img src="https://1089794075-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FHeYD5HNM81vcf8bAxUyk%2Fuploads%2FTt1pWx5W4GZI4ACdRCK8%2FBSVA-HashFunctions_Ch1L3_DA3.gif?alt=media&token=c6552c18-4dc5-45b3-8914-09f281f3b78a" alt="2nd preimage resistance"/> 
+- The message digest of a hash function is consistent given the same input value. In other words, hash functions are deterministic -- the same input produces the same output hash every time. Furthermore, if even a single bit of the input message is changed, the resulting output hash is significantly different, unique, and preimage resistant.
+
+3.  **Collision Resistance**
+
+<img src="https://1089794075-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FHeYD5HNM81vcf8bAxUyk%2Fuploads%2Fp67oxC5KPI94htiIDYqo%2FBSVA-HashFunctions_Ch1L3_DA4.gif?alt=media&token=002874b4-766f-4433-a634-6bbcd818d950" alt="collition resistance"/>
+
+- It’s computationally infeasible to find two different input values that produce the same output value for a hash function. Although the fixed length of their output means a hash function has a collision risk, an ideal hash function produces message digests with a length large enough that the risk of finding a collision is so small, it’s safe to ignore in most situations.
+- Ideally, a hash function with an output value of bitlength `m`
+  should require at least
+  2^m/2
+  operations to find a collision. In a _birthday attack_, given a set of `m `equally probable values, roughly
+  2^m/2
+  random samples are needed to find a single collision. This means if a collision is found in fewer than
+  2^m/2
+  random samples, the collision resistance property of the hash function is “broken”, and it’s no longer considered secure.
+- [Collition Resistance](https://youtu.be/amEX2EdLIcs)
+- [Merkle damgard Parardigm](https://youtu.be/VCOinPlsThw?list=PLPnhHDyS1o44pBF_HyGzWOzxQ9tEk_XIn)
+- This is particularly important with respect to Bitcoin's _proof-of-work process_.
+
+## The Hash Functions Found In Bitcoin
+
+<img src="https://1089794075-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FHeYD5HNM81vcf8bAxUyk%2Fuploads%2FyASwEq5gwo3LOEm8gcXh%2FBSVA-HashFunctions_Ch1L4_DA1.gif?alt=media&token=10626f39-60d1-478b-bafb-60a5924d46fb" alt="hash and bitcoin"/>
+
+## Merkle-Damgard Hash Functions
+
+- The fundamental issue with constructing a hash function is the fact that it must be able to take an input of arbitrary length and compress it into an output of a fixed length. If input is an arbitrary length, it's difficult to achieve second preimage resistance. Also, for a compression function to be collision resistant, it must take fixed length inputs that are longer than its output. One way to remedy this issue is to use a preprocessing step to pad the input to a fixed length rather than compress it directly. Once the input has been preprocessed, it can be compressed consistently.
+- In 1979, both [Ralph Merkle](https://en.wikipedia.org/wiki/Ralph_Merkle) and [Ivan Damgård](https://en.wikipedia.org/wiki/Ivan_Damg%C3%A5rd) independently proved that so long as an appropriate padding scheme is used in the preprocessing step, and the compression function used is collision resistant (implying preiamge and second preimage resistance), it follows that the hash function itself is also collision resistant. The most popular hash functions in use today are based on this Merkle-Damgård method of construction.
+- Merkle-Damgård hash functions have three parts: input and preprocessing, compression, and final value construction and output. The preprocessing step pads the input message so its [congruent](https://dictionary.cambridge.org/dictionary/english/congruent) to a fixed bitlength, e.g. 512 or 1024, and then appends the length of the input itself (this is called Merkle-Damgård strengthening). The compression step uses bitwise logical functions to compute and mutate the processed input in rounds using chaining variables to link each round. Finally, the chaining variables are concatenated and outputted most commonly in hexadecimal format.
+
+# MD4 and MD5
+
+- The first two Merkle-Damgård hash functions to gain widespread adoption were Ron Rivest's MD4 and MD5. First specified in 1992 in the Internet Engineering Task Force (IETF) Request For Comments (RFCs) 1320 and 1321, respectively, MD4 and MD5 were the first hash functions to use a 448 congruent to 512 message block padding scheme with the remaining 64 bits left for Merkle-Damgård strengthening.
+- MD4 enjoyed short-lived success, but Rivest realized shortly after its release that it was likely to be insecure, so he designed MD5 shortly thereafter. Despite Hans Dobbertin's announcement of a collision found for MD5's compression function in 1996, MD5 enjoyed long-lived success. While cryptographers were recommending SHA-1 as a replacement to MD5 as early as 1996, MD5 continued to be used well into the early 2000s.
+- However, in 2004, Xiaoyun Wang, Dengguo Feng, Xuejia Lai, and Hongbo Yu developed an analytical collision attack that could reportedly be performed within an hour on an IBM p690 cluster. This marked the end for MD5 for use in key derviation and digital signatures. In 2008, CMU Software Engineering Institute announced MD5 was "cryptographically broken and unsuitable for further use".
+- Even so, the groundwork laid by MD4 and MD5 provided a practical framework for newer generations of hash functions to follow; including Bitcoin's SHA-256 and RIPEMD-160 which both use 512 bit message blocks and 32 bit words.
+
+## Bitcoin's Hash Functions
