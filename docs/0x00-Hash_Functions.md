@@ -117,3 +117,11 @@ go get github.com/libsv/go-bc
 - Even so, the groundwork laid by MD4 and MD5 provided a practical framework for newer generations of hash functions to follow; including Bitcoin's SHA-256 and RIPEMD-160 which both use 512 bit message blocks and 32 bit words.
 
 ## Bitcoin's Hash Functions
+
+- As already mentioned, the two hash functions found in the Bitcoin system are SHA-256 and RIPEMD-160. For reasons explored further in Chapter 7, Bitcoin uses SHA-256 and RIPEMD-160 in double hash forms: SHA-256(SHA-256) and RIPEMD-160(SHA-256) – often abstracted and referred to as HASH-256 and HASH-160, respectively, following the convention set out in the [original bitcoin code](https://github.com/trottier/original-bitcoin).
+
+- However, the following table displays the full range of hash functions commonly found in the greater Bitcoin ecosystem; including SHA-512 and the HMACs of SHA-256 and SHA-512 which are often utilized by Bitcoin wallet implementations:
+
+![hash functions](/images/hashfunctable.jpg)
+
+## What is Base58 and Why Does Bitcoin Use It?
