@@ -125,3 +125,28 @@ go get github.com/libsv/go-bc
 ![hash functions](/images/hashfunctable.jpg)
 
 ## What is Base58 and Why Does Bitcoin Use It?
+
+<img src="https://1089794075-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FHeYD5HNM81vcf8bAxUyk%2Fuploads%2FmskOpCwSISbsbvGXIjYs%2FBSVA-HashFunctions_Ch2L1_DA1.gif?alt=media&token=bdbe954b-e938-4ae3-88ac-02a050ac7297" alt=""/>
+
+- While Base58 & Base58Check are not hash functions, they are important topics to cover.
+- Base58 is a binary-to-text encoding of data to plain text; i.e., printable characters.
+- Like Base64, Base58 is used to represent 8-bit bytes of binary data in an **ASCII** string format. Bitcoin uses a binary-to-text encoding to enable data stored in binary formats to be transmitted across communication channels that only reliably support text values like email and the internet.
+
+```go
+
+// Why base58 instead of standard base-64 encoding?
+// - Don't want 0OIl characters that look the same in some fonts and
+// could be used to create visually identical looking account numbers.
+// - A string with non-alphanumeric characters is not as easily accepted as an account number.
+// - E-mail usually won't line-break if there's no punctuation to break at.
+// - Doubleclicking selects the whole number as one word if it's all alphanumeric.-
+```
+
+- In other words, since Base58 avoids using non-alphanumeric characters (+ and /) and ambiguous letters (0 - zero, I - capital i, O - capital o, and l - lower case L), it helps ensure Bitcoin addresses are readable, transmittable, and more secure.
+
+<!-- - TODO: add table  https://5thwork.com/courses/course-v1:BIP_Uganda+BIPU0001+2022Q4/courseware/c75b47f9f18b462494b9d67ecc7edd92/00bba1592dcc4cd7b11eda620a8ef7a2/?child=first -->
+
+- Using [hash calculator](https://bitcoinsv.academy/hash-calculator) encode the following hash (displayed in HEX) in Base58:
+  `094d77441cfead50daa8e9ce893698962dbcbbce`
+
+<img src="https://1089794075-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FHeYD5HNM81vcf8bAxUyk%2Fuploads%2FlPCIiAzU11plvspnOyED%2FBSVA-HashFunctions_Ch2L2_DA1%20(1).gif?alt=media&token=66b99488-c37f-48a7-ba59-6353cf0c7cff" alt="BASE58"/>
