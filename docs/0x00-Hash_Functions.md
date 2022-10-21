@@ -150,3 +150,26 @@ go get github.com/libsv/go-bc
   `094d77441cfead50daa8e9ce893698962dbcbbce`
 
 <img src="https://1089794075-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FHeYD5HNM81vcf8bAxUyk%2Fuploads%2FlPCIiAzU11plvspnOyED%2FBSVA-HashFunctions_Ch2L2_DA1%20(1).gif?alt=media&token=66b99488-c37f-48a7-ba59-6353cf0c7cff" alt="BASE58"/>
+
+- The "check" of Base58Check refers to a shortened hash, or 'checksum', which is appended to the end of the Base58 encoded data.
+- The checksum provides another step to ensure the integrity of the Base58 encoded data by providing a comparison value that can be used to automatically detect typographical errors. That way, if any data changes, the checksum value will reflect the change and a data integrity check will fail before any data is transmitted.
+- For example, Alice wants to send some BSV to Bob. She uses a Bitcoin wallet on her mobile phone to scan a QR code corresponding to Bob's Bitcoin address. As soon as Alice scan's Bob's address, her Bitcoin wallet saves the checksum bytes of Bob's address. Unbeknownst to Alice, a link her grandmother sent her on social media had malware in it that targets Bitcoin wallet addresses. Right before Alice is about to send Bitcoin to Bob, the malware changes the address to an address the attacker controls. But, before posting the transaction to the chain, the Bitcoin wallet performs an integrity check using the saved checksum from when Alice first scanned Bob's address. The send fails, and Alice is able to clean the malware off her phone and send the Bitcoin to Bob in a subsequent transaction.
+- Base58Check has the following features:
+
+  - An arbitrarily sized payload or input data.
+  - A set of 58 alphanumeric symbols that are easily distinguishable
+  - One byte of version/application information. Bitcoin addresses use 0x00 for this byte but may use 0x05 in future.
+  - Four bytes (32 bits) of a SHA256-based error checking to auto-detect and possibly correct typographical errors.
+  - An extra step to preserve leading zeros in the data.
+
+- Bitcoin uses Base58Check to encode Bitcoin addresses, and when exporting and importing private keys to and from different Bitcoin wallets.
+
+- More specifically, Base58Check is used to encode public keys during the Bitcoin address creation process, and to encode private keys in a Wallet Import Format (WIF); making copying them to and from different wallets easier and more secure.
+
+- You can find out more about generating Bitcoin addresses and WIFs by following the links below to the BitcoinSV wiki:
+  - [Encoding a Bitcoin Address in Base58Check](https://wiki.bitcoinsv.io/index.php/Base58Check_encoding)
+  - [Wallet Import Format](<https://wiki.bitcoinsv.io/index.php/Wallet_Import_Format_(WIF)>)
+
+Activity - Encode a Bitcoin public key hash in Base58Check
+
+Using the hash calculator, encode the following hash (displayed in HEX) in Base58Check:
