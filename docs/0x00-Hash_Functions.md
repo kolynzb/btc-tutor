@@ -195,4 +195,25 @@ Using the hash calculator, encode the following hash (displayed in HEX) in Base5
   is approximately equal to 1.1579∗1077
   or 1 with 77 zeros following it; meaning it's safe to say SHA-256 has such a low probability of two different input values sharing the same message digest, or very good collision resistance, that it will likely be quite a long time before we have the ability to find a feasible SHA-256 collision attack. Additionally, since Bitcoin publishes all transactions in clear text, i.e., it’s not a cryptographic system, and each transaction uses unique values, even if an attacker were able to discover a private key for a particular transaction, they would have only gained access to a single UTXO within a single transaction
 
-## Double SHA-256: HASH-256 
+## Double SHA-256: HASH-256
+
+In Bitcoin, the double hash of SHA-256 is commonly written as SHA-256d or abstracted to a new function called HASH-256.
+
+- HASH-256 is used to:
+  - Generate transaction IDs – including Merkle Roots
+  - Generate block header IDs
+  - Block header IDs are used to find a proof-of-work solution
+
+## Bitcoin Transactions and SHA-256
+
+**What is a transaction**
+
+- Bitcoin is an electronic cash system made up of 2,100,000,000,000,000 tokens (called ‘satoshis’) and a ledger. A ‘bitcoin’ is `1∗10^8` satoshis. These satoshi tokens are the smallest unit of account in Bitcoin. To transfer ownership of an arbitrary amount of satoshis, a record is added to the ledger in the form of a transaction.
+
+- The transaction acts as a contract complete with how many satoshis are being transferred; from where the satoshis are coming from; and to whom their ownership is being transferred to. Each transaction holds an arbitrary number of input Unspent Transaction Outputs (UTXOs) which include a puzzle or ‘lock’ written in a minimal scripting language called Bitcoin Script (based on Forth) that need to be unlocked in order for the sender to transfer the ownership of the satoshis they hold (I.e., spend), and an arbitrary number of output UTXOs which include new locking scripts that only the receiver can unlock.
+
+- A **UTXO** is the amount of digital currency remaining after a cryptocurrency transaction is executed.UTXOs are processed continuously and are part of the beginning and end of each transaction.
+- Each locking script resolves to either true or false. This means Bitcoin is a predicate system and as such the locking script of a UTXO can be anything that ultimately resolves to true or false
+- [What is Bitcoin locking and unlocking script?](https://bitcoin.stackexchange.com/questions/75165/what-is-bitcoin-locking-and-unlocking-script)
+- [Bitcoin: Pay to Public-key Hash (P2PKH)](https://youtu.be/iWrTS2wTDsk)
+- As discussed briefly, the most common type of UTXO locking script template used in Bitcoin is the Pay-to-Public-Key-Hash (P2PKH) template. The sender uses a hash of the receiver's public key to lock the satoshis being spent in a new output UTXO. The receiver is then able to unlock and use that UTXO as an input in a new transaction by providing the digital signature generated from the corresponding private key. As briefly mentioned above, it’s important to note that there are innumerable ways to lock, and subsequently unlock, UTXOs -- they just need to resolve to either true or false. So long as the result resolves to true, the sending and receiving parties are essentially transferring ownership of the contained satoshis with a digital signature (even if it's not a literal digital signature like in a P2PKH transaction).
