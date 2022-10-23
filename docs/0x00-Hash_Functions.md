@@ -216,4 +216,59 @@ In Bitcoin, the double hash of SHA-256 is commonly written as SHA-256d or abstra
 - Each locking script resolves to either true or false. This means Bitcoin is a predicate system and as such the locking script of a UTXO can be anything that ultimately resolves to true or false
 - [What is Bitcoin locking and unlocking script?](https://bitcoin.stackexchange.com/questions/75165/what-is-bitcoin-locking-and-unlocking-script)
 - [Bitcoin: Pay to Public-key Hash (P2PKH)](https://youtu.be/iWrTS2wTDsk)
-- As discussed briefly, the most common type of UTXO locking script template used in Bitcoin is the Pay-to-Public-Key-Hash (P2PKH) template. The sender uses a hash of the receiver's public key to lock the satoshis being spent in a new output UTXO. The receiver is then able to unlock and use that UTXO as an input in a new transaction by providing the digital signature generated from the corresponding private key. As briefly mentioned above, it’s important to note that there are innumerable ways to lock, and subsequently unlock, UTXOs -- they just need to resolve to either true or false. So long as the result resolves to true, the sending and receiving parties are essentially transferring ownership of the contained satoshis with a digital signature (even if it's not a literal digital signature like in a P2PKH transaction).
+- As discussed briefly, the most common type of UTXO locking script template used in Bitcoin is the Pay-to-Public-Key-Hash (P2PKH) template. The sender uses a hash of the receiver's public key to lock the satoshis being spent in a new output [UTXO](https://youtu.be/hKft6E4K8KY?list=PLZWRruJDdjy1YCnVTcdh9w9vFe8DHy4SG). The receiver is then able to unlock and use that UTXO as an input in a new transaction by providing the digital signature generated from the corresponding private key. As briefly mentioned above, it’s important to note that there are innumerable ways to lock, and subsequently unlock, UTXOs -- they just need to resolve to either true or false. So long as the result resolves to true, the sending and receiving parties are essentially transferring ownership of the contained satoshis with a digital signature (even if it's not a literal digital signature like in a P2PKH transaction).
+- In this way, we can say each satoshi itself is a chain of digital signatures that can be traced back to the initial instantiation of the Bitcoin network in 2009. And, transactions are the fundamental record type that track the addition of each new digital signature to each satoshi since the Bitcoin network was instantiated in 2009.
+- Once a transaction has been constructed and serialised in its raw HEX form, it's hashed using HASH-256 to get its corresponding transaction ID (TXID). Bitcoin nodes use TXIDs in their Merkle trees and in their memory pools to keep received transactions organised.
+- Once a transaction has been constructed and serialised in its raw HEX form, it's hashed using HASH-256 to get its corresponding transaction ID (TXID). Bitcoin nodes use TXIDs in their Merkle trees and in their memory pools to keep received transactions organised.
+
+<img src="https://1089794075-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FHeYD5HNM81vcf8bAxUyk%2Fuploads%2F64xzzv8mUd7eaXvoTu9y%2FBSVA-HashFunctions_Ch3L2_DA1.gif?alt=media&token=d915a5f0-232e-4174-b22f-0e67ea7a987f" alt="transaction"/>
+
+## P2PKH Transactions
+
+- Although it’s possible to embed data directly into transactions, P2PKH is the most well understood UTXO locking script template. In P2PKH UTXOs, the public key hash is a Bitcoin address, which is a HASH-160 (further explored in chapter 5) of the public key portion of an Elliptic Curve public-private key-pair. In P2PKH UTXOs, satoshis are “locked” to the receiver’s Bitcoin address allowing them to unlock the UTXO and spend the satoshis within it using the corresponding private key for the public key used to create the address.
+
+### Example P2PKH Transaction
+
+- The following is an example of a P2PKH transaction in RAW hexadecimal format:
+  `010000000167e7105b52e8534596af29dba949921cffe3dbaa555b8ed96121346c6755adae000000006a47304402206e4db9dee8449b861e5fdc00ba3bdb80fba8cd52c75489376c54bd65d26262650220453569438e6bc6f957b1f7ff6fff4af2e42edaae1ac885382373d42fa569b17c41210267d2d1f8b3affffa10b68b2756ba7f6f4efafcadbecd145181016178d00b379bffffffff019c276bee000000001976a914accd105073775756cc04962bc1e4893694f50c5588ac00000000`
+
+- Below, is the same transaction decoded and presented in a JSON format
+
+```json
+{
+  "version": 1,
+  "size": 191,
+  "locktime": 0,
+  "vin": [
+    {
+      "txid": "aead55676c342161d98e5b55aadbe3ff1c9249a9db29af964553e8525b10e767",
+      "vout": 0,
+      "scriptSig": {
+        "asm": "304402206e4db9dee8449b861e5fdc00ba3bdb80fba8cd52c75489376c54bd65d26262650220453569438e6bc6f957b1f7ff6fff4af2e42edaae1ac885382373d42fa569b17c[ALL|FORKID] 0267d2d1f8b3affffa10b68b2756ba7f6f4efafcadbecd145181016178d00b379b",
+        "hex": "47304402206e4db9dee8449b861e5fdc00ba3bdb80fba8cd52c75489376c54bd65d26262650220453569438e6bc6f957b1f7ff6fff4af2e42edaae1ac885382373d42fa569b17c41210267d2d1f8b3affffa10b68b2756ba7f6f4efafcadbecd145181016178d00b379b"
+      },
+      "sequence": 4294967295
+    }
+  ],
+  "vout": [
+    {
+      "value": 39.999999,
+      "n": 0,
+      "scriptPubKey": {
+        "asm": "OP_DUP OP_HASH160 accd105073775756cc04962bc1e4893694f50c55 OP_EQUALVERIFY OP_CHECKSIG",
+        "hex": "76a914accd105073775756cc04962bc1e4893694f50c5588ac",
+        "reqSigs": 1,
+        "type": "pubkeyhash",
+        "addresses": ["mwGeB8HZwx22snzWoXRRfL2dhmJ4QXZr9V"]
+      }
+    }
+  ],
+  "time": 1645757424
+}
+```
+
+- Transactions consist of 6 serialised elements:
+
+|     |     |     |     |
+| --- | --- | --- | --- |
+|     |     |     |     |
