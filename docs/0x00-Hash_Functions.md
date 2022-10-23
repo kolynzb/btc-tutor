@@ -268,7 +268,162 @@ In Bitcoin, the double hash of SHA-256 is commonly written as SHA-256d or abstra
 ```
 
 - Transactions consist of 6 serialised elements:
+  [All tables](https://5thwork.com/courses/course-v1:BIP_Uganda+BIPU0001+2022Q4/courseware/c75b47f9f18b462494b9d67ecc7edd92/4996120566f54e3e841c5f8935e63576/)
 
-|     |     |     |     |
-| --- | --- | --- | --- |
-|     |     |     |     |
+- [Big Endian and Little Endian](https://chortle.ccsu.edu/assemblytutorial/Chapter-15/ass15_3.html)
+
+# Bitcoin Blocks and SHA-256
+
+<img src="https://1089794075-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FHeYD5HNM81vcf8bAxUyk%2Fuploads%2FpvqgKK4RSvaYDWQFyh3c%2FBSVA-HashFunctions_Ch3L3_DA1.gif?alt=media&token=0cddac1b-33d3-4c06-bf1c-beea22bbc04c"/>
+
+## What is a Bitcoin Block?
+
+- A Bitcoin block is the time stamped package consisting of all transactional activity accumulated between each proof of work solution discovery. Like TXIDs, Block IDs are the HASH-256 of the serialised block header. The time between blocks is algorithmically regulated to keep the block discovery rate approximating one every ten minutes.
+- Each block consists of all the transactions received by whichever node won the right to add the block to the chain, their data payloads if there are any, and a block header containing the following serialised elements:
+
+  - version field: 4 bytes; little endian
+
+  - previous block hash: 32 bytes; little endian
+
+  - Merkle Root Hash: 32 bytes; little endian
+
+  - time field: 4 bytes; big endian (Unix epoch timestamp)
+
+  - nbits: 4 bytes; little endian (denotes the current difficulty target nodes must find a proof-of-work solution below)
+
+  - nonce: 4 bytes; little endian (a field hashers use to cycle through in search of a proof-of-work solution.
+
+- The below is an example block deserialised in JSON format
+
+```json
+{
+ "tx": [
+ "63fde109a6f22a611fe80847eb43f34b1cef0ec095273c3cbf12b0164295796b",
+ "d94f1db2079b1a3f4c4936e0f47434e09ab7eef7a1d35d2fc6af5dd9e87b4f84"
+ ],
+ "hash": "0be14bde7beb17c481b5bc78496ef129c25e16401d78419e789f9629db6057e4",
+ "confirmations": 155,
+ "size": 406,
+ "height": 284,
+ "version": 536870912,
+ "versionHex": "20000000",
+ "merkleroot": "f15b44eebcf7a3c3009cc6acd3bd1dd74f256448936c88ad72f39b55981ddffd",
+ "num_tx": 2,
+ "time": 1647415283,
+ "mediantime": 1647412906,
+ "nonce": 0,
+ "bits": "207fffff",
+ "difficulty": "4.656542373906925e-10",
+ "chainwork": "000000000000000000000000000000000000000000000000000000000000023a",
+ "previousblockhash": "74f52bbca1a9a4f7f13f85cdcd24c7f49650cd1d463421373eb3bcb683868712",
+ "nextblockhash": "7e976012ba0a1cd9eeba8fb57ba41c982b914cffcd17fe46b84c0a0333db79eb",
+ "coinbaseTx": {
+ "txid": "63fde109a6f22a611fe80847eb43f34b1cef0ec095273c3cbf12b0164295796b",
+ "hash": "63fde109a6f22a611fe80847eb43f34b1cef0ec095273c3cbf12b0164295796b",
+ "version": 2,
+ "size": 100,
+ "locktime": 0,
+ "vin": [
+ {
+ "coinbase": "021c010101",
+ "sequence": 4294967295
+ }
+ ],
+ "vout": [
+ {
+ "value": 25.00000113,
+ "n": 0,
+ "scriptPubKey": {
+ "asm": "03642fd43b260aab1f0241535c9fabec5445bdc42591a5be9d555a6e33c96a09d8 OP_CHECKSIG",
+ "hex": "2103642fd43b260aab1f0241535c9fabec5445bdc42591a5be9d555a6e33c96a09d8ac",
+ "reqSigs": 1,
+ "type": "pubkey",
+ "addresses": [
+ "mjvmz3xW4nTbjtKsmbfhsXB9gtm9GBddJg"
+ ]
+ }
+ }
+ ],
+ "blockhash": "0be14bde7beb17c481b5bc78496ef129c25e16401d78419e789f9629db6057e4",
+ "confirmations": 155,
+ "time": 1647415283,
+ "blocktime": 1647415283,
+ "blockheight": 284,
+ "hex": "02000000010000000000000000000000000000000000000000000000000000000000000000ffffffff05021c010101ffffffff0171f9029500000000232103642fd43b260aab1f0241535c9fabec5445bdc42591a5be9d555a6e33c96a09d8ac00000000"
+ },
+ "totalFees": "-24.99999887",
+ "miner": "\u0002\u001c\u0001\u0001\u0001",
+ "txCount": 2
+```
+
+[Table break down](https://5thwork.com/courses/course-v1:BIP_Uganda+BIPU0001+2022Q4/courseware/c75b47f9f18b462494b9d67ecc7edd92/4996120566f54e3e841c5f8935e63576/)
+
+- All spendable outputs from previous transactions are held by all nodes in their continuously updated Unspent Transaction Output (UTXO) sets. All new transactions submitted to the node network have their input UTXOs cross-checked against nodes' UTXO sets. Transactions that have been generated on the network and are yet to be timestamped into a block are stored in node memory pools or mempools. Nodes construct a Merkle tree from the transactions in their mempool to calculate the Merkle root to populate the Merkle Root field in the block header. Once a UTXO has been consumed as an input, it's no longer necessary for nodes to keep it in their UTXO sets, and its often pruned -- including its data payload.
+
+## How is a Bitcoin Block Created?
+
+- As transactions are broadcast to the BSV network to be added to the blockchain, each node validates them against the block consensus rules, then against their local policies. If received transactions pass validation, their TXIDs are added to the node's working Merkle Tree
+- Nodes then send block header templates to their hashing pools with a range of nonce values to be iterated through with the aim of finding a proof-of-work solution. Once a proof-of-work solution is found, the block ID is finalized, and the resulting ‘proposed’ block is distributed to the rest of the nodes on the network. Once the majority of other network nodes have signalled acceptance of the newly found block by starting to build a block template using its block ID as the previous block hash, the block is considered won, and after 99 more blocks are added on top of it, its block reward UTXO becomes spendable.
+- [Find out more about node infrastructure in our Introduction to Bitcoin Infrastructure course.](https://bitcoinsv.academy/course/introduction-to-bitcoin-infrastructure)
+
+## Proof-of-Work and HASH-256
+
+![](https://1089794075-files.gitbook.io/~/files/v0/b/gitbook-x-prod.appspot.com/o/spaces%2FHeYD5HNM81vcf8bAxUyk%2Fuploads%2FGNNP9u2jELL6VJmWL3uw%2FBSVA-HashFunctions_Ch3L4_DA1.gif?alt=media&token=4d290ebc-26da-4e7a-9c68-c5343884e6cd)
+
+## What is Proof-of-Work?
+
+- As referenced in the Bitcoin white paper, a proof-of-work system is a signalling mechanism that requires participants to demonstrate they have performed a necessary amount of work before they're allowed to perform a desired action. In Bitcoin, this is achieved by requiring participants (I.e., Bitcoin nodes) use HASH-256 on a serialised block header until they find a resulting message digest that’s less than a provided difficulty target value.
+- The preimage, second preimage, and collision resistance properties of SHA-256 – and in turn HASH-256 – ensure the only way nodes are able to find a proof-of-work solution is by brute-force; i.e., by hashing as many versions of the block header as they can as quickly as possible (iterating the nonce value in the block header), until they find a desired message digest.
+
+## How is Proof-of-Work Used in Bitcoin?
+
+- As nodes receive transactions, they continuously update the Merkle root and timestamp in their block header template and send these headers and their range of nonces as mining candidates to hashing pools to be hashed in search of a proof-of-work solution:
+
+  1.  A node collects transactions and builds a Merkle Tree
+
+  2.  The node then builds a block header template
+
+  3.  The node then constructs a mining candidate
+
+  4.  hash-pools poll nodes using a GMC (Get Mining Candidate) function call
+
+- Nodes currently update their mining candidates about 10 times a second, and most hash-pools poll nodes for a mining candidate every 30 seconds.
+
+- To keep block production to an interval of around 10 minutes – which is slow enough to keep orphan races to a minimum and fast enough to force miners to stay competitive – the difficulty target is adjusted by adding or removing leading zeroes, and updating its first non-zero bytes; making the search for a proof-of-work either more or less difficult, respectively. This is called the block discovery rate.
+
+- In the early days of Bitcoin, the difficulty was low enough that it was possible to find a proof-of-work solution using a desktop CPU. As Bitcoin matured, it became more and more difficult to find a proof-of-work solution fast enough, so node operators started using graphics processing units (GPUs) to improve their efficiency. More recently, application-specific integrated circuits (ASICs) designed for the sole purpose of calculating SHA-256 message digests have superseded GPUs.
+
+- Originally, the block difficulty was adjusted every 2,016 block or about every 2 weeks. However, in 2017, it was changed to recalculate after every block. There is a commitment from BSV node operators to revert the network back to a 2,016-block difficulty calculation rate.
+
+- One important point to note is that a block is only considered ‘won’ if the majority of nodes on the network have started using its hash as the previous block hash to search for the next proof-of-work solution. This action of accepting a block by starting to build on the next block is the only consensus mechanism in Bitcoin, and serves as the basis of what must be done in order for a network participant to be considered a node: namely, they must be accepting blocks and successfully finding proof-of-work solutions for subsequent blocks. This creates important economic incentives for nodes to be as efficient and interconnected as possible; allowing the network to scale block sizes and transaction throughput to the levels needed to accommodate any kind of network growth – even if that growth is exponential.
+
+[Find out more about proof-of-work infrastructure in our Introduction to Bitcoin Infrastructure course.](https://bitcoinsv.academy/course/introduction-to-bitcoin-infrastructure)
+
+## Overview of SHA-256
+
+- Although it's not required in order to gain an understanding of how Bitcoin works, examining how each of the underlying hash functions used in Bitcoin work can be helpful because the concepts and operations used within the hash function algorithms can be found in other parts of the Bitcoin system. For example, combining binary values using the exclusive OR bit operation (XOR) is also used in both digital signature construction as well as Bitcoin Script.
+
+- Note: This implementation is for informational purposes only. It has not been optimized or rigorously tested and should therefore not be used in a production environment. As a general rule, you should only ever use a rigorously tested and widely accepted implementation of any hash function.
+- Source Code can be found here: https://github.com/jakeBitcoinAssociation/hash-functions
+
+xample Implementation of SHA-256 in GoLang
+
+Our implementation of SHA-256 follows this design:
+
+1. Input and Preprocessing
+
+Input
+
+Message block construction
+
+Message schedule construction
+
+2. Compression
+
+Initialization of working variables
+
+Computation of temporary words and mutation of working variables
+
+Integrate computed and mutated working variables with initial values
+
+3. Final value construction and output
