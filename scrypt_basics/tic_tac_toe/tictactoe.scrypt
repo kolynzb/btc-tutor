@@ -1,7 +1,11 @@
 contract TicTakToe {
-    
-	public function unlock(bytes message) {
-		require(message == "hello world, sCrypt 😊");
-	}
+   PubKey alice ;
+   PubKey bob ;
+   static const int N = 9 ;
+   static const  int EMPTY = 0 ;
+    static const int ALICE = 1 ; 
+    static const int BOB = 2 ; 
+
+
 
 }
