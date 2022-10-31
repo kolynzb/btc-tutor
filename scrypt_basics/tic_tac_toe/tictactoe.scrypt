@@ -1,3 +1,7 @@
 contract TicTakToe {
+    
+	public function unlock(bytes message) {
+		require(message == "hello world, sCrypt 😊");
+	}
 
 }
