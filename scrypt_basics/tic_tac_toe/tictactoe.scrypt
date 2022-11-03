@@ -5,7 +5,11 @@ contract TicTakToe {
    static const  int EMPTY = 0 ;
     static const int ALICE = 1 ; 
     static const int BOB = 2 ; 
+ 
 
+   public function main (){
+        require(true);
+   }
 
 
 }
